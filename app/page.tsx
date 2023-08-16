@@ -7,23 +7,25 @@ export default function Home() {
     { icon: "github", link: "https://github.com/Ampoi" }
   ]
   const creations = [
-    { image: "./creations/Stask.jpeg", name: "Stask", description: "2022年夏〜学力向上アプリコンテスト〜未踏ジュニアにかけて開発している学生向けの課題管理アプリです。使いやすい(使いやすくする)から使ってみてね。" },
-    { image: "./creations/ToBe.png", name: "ToBe", description: "ゲームのスキルツリーみたいな感じで自分のタスクできたら面白そうだな〜　って思って作ったアプリです。" },
-    { image: "./creations/URLMEMO.png", name: "URLMEMO", description: "URLを通じてメモを保存・閲覧・共有できるアプリです。Instagramとかでそのまま文見られるよりはひと段落あったほうがいいかなって思って作りました。" },
-    { image: "./creations/KAGARIBI.png", name: "131代海城祭公式サイト", description: "131代の文化祭公式サイトです。" },
-    { image: "./creations/BASER.png", name: "BASER", description: "2Dの火星みたいな星の上で色々するゲームです。気が向いたらたまに開発してます。" },
+    { image: "Stask.jpeg", name: "Stask", description: "2022年夏〜学力向上アプリコンテスト〜未踏ジュニアにかけて開発している学生向けの課題管理アプリです。使いやすい(使いやすくする)から使ってみてね。" },
+    { image: "ToBe.png", name: "ToBe", description: "ゲームのスキルツリーみたいな感じで自分のタスクできたら面白そうだな〜　って思って作ったアプリです。" },
+    { image: "URLMEMO.png", name: "URLMEMO", description: "URLを通じてメモを保存・閲覧・共有できるアプリです。Instagramとかでそのまま文見られるよりはひと段落あったほうがいいかなって思って作りました。" },
+    { image: "KAGARIBI.png", name: "131代海城祭公式サイト", description: "131代の文化祭公式サイトです。" },
+    { image: "KIRAMEKI.png", name: "132代海城祭公式サイト", description: "132代の文化祭公式サイトです。" },
+    { image: "BASER.png", name: "BASER", description: "2Dの火星みたいな星の上で色々するゲームです。気が向いたらたまに開発してます。" },
   ]
   const works = [
-    { image: "./works/AKEOME.jpg", name: "あけおめ", description: "2023年度元旦のやつです。" },
-    { image: "./works/ATTITUDE.jpg", name: "Attitude", description: "Mrs.GREEN APPLEの「Attitude」の作字です。" },
-    { image: "./works/DORYOKU.jpeg", name: "努力", description: "KICK BACKの替え歌みたいなのでめっちゃ努力って入ってるやつがあったので作ってみました。特に意味はないです。" },
-    { image: "./works/GENDOUKI.jpg", name: "原動機", description: "昭和感出したくて作ってみました。" },
-    { image: "./works/KAIJUNOHANAUTA.jpg", name: "怪獣の花唄", description: "5月くらいまで獣って字の左側に線が入ってるってこと知りませんでした。漢字間違ってます。" },
-    { image: "./works/LOVIN.jpg", name: "lovin'", description: "Mrs.GREEN APPLEの「lovin'」の作字です。歌がめっちゃ可愛いので聞いてみてください。" },
-    { image: "./works/MITIBIKI.jpeg", name: "導", description: "方べきの定理に見えるとあまり評価は良くなかったです。" },
-    { image: "./works/ROUDOU.jpg", name: "働", description: "友達とやっていたマイクラの労働サーバーのアイコンです。" },
-    { image: "./works/SEITOKAI.jpeg", name: "生徒会", description: "とりあえず作ってみただけです。特に生徒会への忠誠心とかはありません。" },
-    { image: "./works/TUKIMASITEHA.jpg", name: "ツキマシテハ", description: "Mrs.GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。" },
+    { image:  "Loneliness.png", name: "Loneliness", description: "Mrs.GREEN APPLEの「Loneliness」の作字です。"},
+    { image: "AKEOME.jpg", name: "あけおめ", description: "2023年度元旦のやつです。" },
+    { image: "ATTITUDE.jpg", name: "Attitude", description: "Mrs.GREEN APPLEの「Attitude」の作字です。" },
+    { image: "DORYOKU.jpeg", name: "努力", description: "KICK BACKの替え歌みたいなのでめっちゃ努力って入ってるやつがあったので作ってみました。特に意味はないです。" },
+    { image: "GENDOUKI.jpg", name: "原動機", description: "昭和感出したくて作ってみました。" },
+    { image: "KAIJUNOHANAUTA.jpg", name: "怪獣の花唄", description: "5月くらいまで獣って字の左側に線が入ってるってこと知りませんでした。漢字間違ってます。" },
+    { image: "LOVIN.jpg", name: "lovin'", description: "Mrs.GREEN APPLEの「lovin'」の作字です。歌がめっちゃ可愛いので聞いてみてください。" },
+    { image: "MITIBIKI.jpeg", name: "導", description: "方べきの定理に見えるとあまり評価は良くなかったです。" },
+    { image: "ROUDOU.jpg", name: "働", description: "友達とやっていたマイクラの労働サーバーのアイコンです。" },
+    { image: "SEITOKAI.jpeg", name: "生徒会", description: "とりあえず作ってみただけです。特に生徒会への忠誠心とかはありません。" },
+    { image: "TUKIMASITEHA.jpg", name: "ツキマシテハ", description: "Mrs.GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。" },
   ]
 
   return (
@@ -58,7 +60,7 @@ export default function Home() {
       </div>
       <div className='max-w-3xl mx-auto px-4 mt-10'>
         <h2 className='text-6xl font-bold text-black/10'>Creations</h2>
-        <p className='-mt-6 ml-4'>これまでに作った作品とかです。</p>
+        <p className='-mt-6 ml-4'>これまでに作った作品とかです。マウスをホバーorタップすることで説明を見ることができます。</p>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
           {creations.map((creation) => {
             return (
@@ -66,7 +68,7 @@ export default function Home() {
                 className='bg-slate-300 rounded-lg relative bg-cover bg-center overflow-hidden'
                 style={{
                   aspectRatio: "16/ 9",
-                  backgroundImage: `url(${creation.image})`
+                  backgroundImage: `url(./creations/${creation.image})`
                 }}>
                 <div className='absolute px-4 py-8 bg-white/80 backdrop-blur-sm transition duration-300 opacity-0 hover:opacity-100 h-full w-full overflow-y-auto'>
                   <h1 className='text-3xl font-semibold'>{creation.name}</h1>
@@ -79,7 +81,7 @@ export default function Home() {
       </div>
       <div className='max-w-3xl mx-auto px-4 mt-10'>
         <h2 className='text-6xl font-bold text-black/10'>Works</h2>
-        <p className='-mt-6 ml-4'>これまでに作った作字とかです。たまにTwitterとかで投稿しています。</p>
+        <p className='-mt-6 ml-4'>これまでに作った作字とかです。たまにTwitterとかで投稿しています。マウスをホバーorタップすることで説明を見ることができます。</p>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
           {works.map((work) => {
             return (
@@ -87,7 +89,7 @@ export default function Home() {
                 className='bg-slate-300 rounded-lg relative bg-cover bg-center overflow-hidden'
                 style={{
                   aspectRatio: "1 / 1",
-                  backgroundImage: `url(${work.image})`
+                  backgroundImage: `url(./works/${work.image})`
                 }}>
                 <div className='absolute px-4 py-8 bg-white/40 backdrop-blur-xl transition duration-300 opacity-0 hover:opacity-100 h-full w-full overflow-y-auto'>
                   <h1 className='text-3xl font-semibold'>{work.name}</h1>
