@@ -1,4 +1,7 @@
+"use client"
 import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
   const dekirukotos = ["ウェブアプリ", "デザイン", "作字"]
@@ -7,12 +10,12 @@ export default function Home() {
     { icon: "github", link: "https://github.com/Ampoi" }
   ]
   const creations = [
-    { image: "Stask", name: "Stask", description: "2022年夏〜学力向上アプリコンテスト〜未踏ジュニアにかけて開発している学生向けの課題管理アプリです。使いやすい(使いやすくする)から使ってみてね。" },
-    { image: "ToBe", name: "ToBe", description: "ゲームのスキルツリーみたいな感じで自分のタスクできたら面白そうだな〜　って思って作ったアプリです。" },
-    { image: "URLMEMO", name: "URLMEMO", description: "URLを通じてメモを保存・閲覧・共有できるアプリです。Instagramとかでそのまま文見られるよりはひと段落あったほうがいいかなって思って作りました。" },
-    { image: "KAGARIBI", name: "131代海城祭公式サイト", description: "131代の文化祭公式サイトです。" },
-    { image: "KIRAMEKI", name: "132代海城祭公式サイト", description: "132代の文化祭公式サイトです。" },
-    { image: "BASER", name: "BASER", description: "2Dの火星みたいな星の上で色々するゲームです。気が向いたらたまに開発してます。" },
+    { link: "https://stask.ampoi.net", image: "Stask", name: "Stask", description: "2022年夏〜学力向上アプリコンテスト〜未踏ジュニアにかけて開発している学生向けの課題管理アプリです。使いやすい(使いやすくする)から使ってみてね。" },
+    { link: "https://to-be.ampoi.net", image: "ToBe", name: "ToBe", description: "ゲームのスキルツリーみたいな感じで自分のタスクできたら面白そうだな〜　って思って作ったアプリです。" },
+    { link: "https://urlmemo.ampoi.net", image: "URLMEMO", name: "URLMEMO", description: "URLを通じてメモを保存・閲覧・共有できるアプリです。Instagramとかでそのまま文見られるよりはひと段落あったほうがいいかなって思って作りました。" },
+    { link: "https://131.kaijofes.com/", image: "KAGARIBI", name: "131代海城祭公式サイト", description: "131代の文化祭公式サイトです。" },
+    { link: "https://132.kaijofes.com/", image: "KIRAMEKI", name: "132代海城祭公式サイト", description: "132代の文化祭公式サイトです。" },
+    { link: "https://github.com/Ampoi/Baser", image: "BASER", name: "BASER", description: "2Dの火星みたいな星の上で色々するゲームです。気が向いたらたまに開発してます。" },
   ]
   const works = [
     { image: "Loneliness", name: "Loneliness", description: "Mrs.GREEN APPLEの「Loneliness」の作字です。"},
@@ -28,8 +31,17 @@ export default function Home() {
     { image: "TUKIMASITEHA", name: "ツキマシテハ", description: "Mrs.GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。" },
   ]
 
+  const [isBlack, setIsBlack] = useState(false)
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      setIsBlack(1400 < window.scrollY)
+    })
+  }, [])
+
   return (
-    <main>
+    <main
+      className={`transition duration-500 ${ isBlack ? 'bg-black text-white' : 'bg-white' }`}>
       <div className='w-screen h-screen grid place-content-center'>
         <div className='flex flex-col gap-4 items-center'>
           <Image src="/Ampoi.svg" alt="Ampoi Logo" width={300} height={123}/>
@@ -59,7 +71,10 @@ export default function Home() {
         </p>
       </div>
       <div className='max-w-3xl mx-auto px-4 mt-10'>
-        <h2 className='text-6xl font-bold text-black/10'>Creations</h2>
+        <h2
+          className={`text-6xl font-bold transition duration-500 ${ isBlack ? 'text-white/20' : 'text-black/10' }`}>
+          Creations
+        </h2>
         <p className='-mt-6 ml-4'>これまでに作った作品とかです。マウスをホバーorタップすることで説明を見ることができます。</p>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
           {creations.map((creation) => {
@@ -73,6 +88,12 @@ export default function Home() {
                 <div className='absolute px-4 py-8 bg-white/80 backdrop-blur-sm transition duration-300 opacity-0 hover:opacity-100 h-full w-full overflow-y-auto'>
                   <h1 className='text-3xl font-semibold'>{creation.name}</h1>
                   <p className='mt-2'>{creation.description}</p>
+                  <p className='mt-4 underline decoration-dotted decoration-black/20'>
+                    <Link
+                      href={creation.link}>
+                      作品を見る
+                    </Link>
+                  </p>
                 </div>
               </div>
             )
@@ -80,7 +101,7 @@ export default function Home() {
         </div>
       </div>
       <div className='max-w-3xl mx-auto px-4 mt-10'>
-        <h2 className='text-6xl font-bold text-black/10'>Works</h2>
+        <h2 className={`text-6xl font-bold transition duration-500 ${ isBlack ? 'text-white/20' : 'text-black/10' }`}>Works</h2>
         <p className='-mt-6 ml-4'>これまでに作った作字とかです。たまにTwitterとかで投稿しています。マウスをホバーorタップすることで説明を見ることができます。</p>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
           {works.map((work) => {
@@ -91,8 +112,8 @@ export default function Home() {
                   aspectRatio: "1 / 1",
                   backgroundImage: `url(./images/works/${work.image}.webp)`
                 }}>
-                <div className='absolute px-4 py-8 bg-white/40 backdrop-blur-xl transition duration-300 opacity-0 hover:opacity-100 h-full w-full overflow-y-auto'>
-                  <h1 className='text-3xl font-semibold'>{work.name}</h1>
+                <div className='absolute px-4 py-8 bg-black/40 text-white backdrop-blur-xl transition duration-300 opacity-0 hover:opacity-100 h-full w-full overflow-y-auto'>
+                  <h1 className='text-3xl font-semibold'>『{work.name}』</h1>
                   <p className='mt-2'>{work.description}</p>
                 </div>
               </div>
