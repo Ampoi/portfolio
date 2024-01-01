@@ -29,6 +29,9 @@ export default function Home() {
     { image: "ROUDOU", name: "働", description: "友達とやっていたマイクラの労働サーバーのアイコンです。" },
     { image: "SEITOKAI", name: "生徒会", description: "とりあえず作ってみただけです。特に生徒会への忠誠心とかはありません。" },
     { image: "TUKIMASITEHA", name: "ツキマシテハ", description: "Mrs.GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。" },
+    { image: "Afternoon", name: "Afternoon", description: "Mrs.GREEN APPLEの「Afternoon」の作字です。本当にいい曲なので聞いてみてください。" },
+    { image: "クダリ", name: "クダリ", description: "Mrs.GREEN APPLEの「クダリ」の作字です。本当にいい曲なので聞いてみてください。" },
+    { image: "アウフヘーベン", name: "アウフヘーベン", description: "Mrs.GREEN APPLEの「アウフヘーベン」の作字です。本当にいい曲なので聞いてみてください。" },
   ]
 
   const [isBlack, setIsBlack] = useState(false)
