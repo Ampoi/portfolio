@@ -4,15 +4,27 @@ import { Inter } from 'next/font/google'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 const inter = Inter({ subsets: ['latin'] })
+const siteName = "Ampoi"
+const url = "https://ampoi.net"
+const description = "プログラミングが好きな高校生"
 
 export const metadata: Metadata = {
-  title: 'Ampoi',
-  description: 'Ampoiの作品・作字を置いているポートフォリオ',
+  title: siteName,
+  description,
   openGraph: {
-    siteName: "Ampoi Portfolio",
-    images: { url: "https://ampoi.net/OGP.webp" },
-    
-  }
+    title: siteName,
+    description,
+    url,
+    siteName,
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteName,
+    description,
+    creator: '@Ampoi',
+  },
 }
 
 export default function RootLayout({
