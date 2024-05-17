@@ -18,44 +18,50 @@
 <script setup lang="ts">
 const works = [
   {
+    image: "ProPose",
+    name: "ProPose",
+    description:
+      "Mrs. GREEN APPLEの「ProPose」の作字です。本当にいい曲なので聞いてみてください。",
+  },
+  {
     image: "Afternoon",
     name: "Afternoon",
     description:
-      "Mrs.GREEN APPLEの「Afternoon」の作字です。本当にいい曲なので聞いてみてください。",
+      "Mrs. GREEN APPLEの「Afternoon」の作字です。本当にいい曲なので聞いてみてください。",
   },
   {
     image: "クダリ",
     name: "クダリ",
     description:
-      "Mrs.GREEN APPLEの「クダリ」の作字です。本当にいい曲なので聞いてみてください。",
+      "Mrs. GREEN APPLEの「クダリ」の作字です。本当にいい曲なので聞いてみてください。",
   },
   {
     image: "アウフヘーベン",
     name: "アウフヘーベン",
     description:
-      "Mrs.GREEN APPLEの「アウフヘーベン」の作字です。本当にいい曲なので聞いてみてください。",
+      "Mrs. GREEN APPLEの「アウフヘーベン」の作字です。本当にいい曲なので聞いてみてください。",
   },
   {
     image: "Loneliness",
     name: "Loneliness",
-    description: "Mrs.GREEN APPLEの「Loneliness」の作字です。",
+    description: "Mrs. GREEN APPLEの「Loneliness」の作字です。",
   },
   {
     image: "ATTITUDE",
     name: "Attitude",
-    description: "Mrs.GREEN APPLEの「Attitude」の作字です。",
+    description: "Mrs. GREEN APPLEの「Attitude」の作字です。",
   },
   {
     image: "LOVIN",
     name: "lovin'",
     description:
-      "Mrs.GREEN APPLEの「lovin'」の作字です。歌がめっちゃ可愛いので聞いてみてください。",
+      "Mrs. GREEN APPLEの「lovin'」の作字です。歌がめっちゃ可愛いので聞いてみてください。",
   },
   {
     image: "TUKIMASITEHA",
     name: "ツキマシテハ",
     description:
-      "Mrs.GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。",
+      "Mrs. GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。",
   },
 ];
 </script>
