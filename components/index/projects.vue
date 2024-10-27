@@ -21,21 +21,21 @@
 <script setup lang="ts">
 const projects = [
   {
-    link: "https://stask.ampoi.net",
+    link: "https://stask.ampoi.dev",
     image: "Stask",
     name: "Stask",
     description:
       "2022年夏〜学力向上アプリコンテスト〜未踏ジュニアにかけて開発している学生向けの課題管理アプリです。使いやすい(使いやすくする)から使ってみてね。",
   },
   {
-    link: "https://to-be.ampoi.net",
+    link: "https://to-be.ampoi.dev",
     image: "ToBe",
     name: "ToBe",
     description:
       "ゲームのスキルツリーみたいな感じで自分のタスクできたら面白そうだな〜　って思って作ったアプリです。",
   },
   {
-    link: "https://urlmemo.ampoi.net",
+    link: "https://urlmemo.ampoi.dev",
     image: "URLMEMO",
     name: "URLMEMO",
     description:

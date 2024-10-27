@@ -4,6 +4,13 @@
     <p class="-mt-4">直近の出来事とか</p>
     <div class="flex flex-col gap-4 mt-4 max-h-40 overflow-y-auto">
       <p class="text-xl font-semibold">
+        <span class="text-base">2024/09/23</span>
+        <span>
+          アプリ甲子園2024
+          <span class="text-blue-800">一次審査通過</span>
+        </span>
+      </p>
+      <p class="text-xl font-semibold">
         <span class="text-base">2023/12/26</span>
         <span>
           未踏ジュニア
