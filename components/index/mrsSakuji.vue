@@ -18,6 +18,12 @@
 <script setup lang="ts">
 const works = [
   {
+    image: "APRIORI",
+    name: "ア・プリオリ",
+    description:
+      "Mrs. GREEN APPLEの「ア・プリオリ」の作字です。本当にいい曲なので聞いてみてください。",
+  },
+  {
     image: "ProPose",
     name: "ProPose",
     description:
