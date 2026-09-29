@@ -1,0 +1,6 @@
+/generated/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/generated-glass/*
+  Cache-Control: public, max-age=31536000, immutable

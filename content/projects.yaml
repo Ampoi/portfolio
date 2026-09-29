@@ -1,0 +1,12 @@
+- slug: example
+  name: サンプルプロジェクト
+  description: 詳細記事のあるプロジェクトです。自由に差し替えてください。
+  image: images/projects/example.jpg
+  link: https://example.com
+  article: articles/example.md
+
+- slug: link-only
+  name: リンクのみのサンプル
+  description: article を省略すると、詳細記事へのリンクは表示されません。
+  image: images/projects/example.jpg
+  link: https://example.com

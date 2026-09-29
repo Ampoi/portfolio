@@ -1,0 +1,4 @@
+- slug: example
+  name: 作字のサンプル
+  description: 動作確認用の透過PNGです。自分の作字画像に差し替えてください。
+  image: images/lettering/example.png

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+src/generated/
+public/generated/
+public/generated-glass/
+public/.generated-next/
+.wrangler/
+.vite-ssg-temp/
+.env*
+.DS_Store
