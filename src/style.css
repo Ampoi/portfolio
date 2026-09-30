@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Match the inclusive mobile breakpoint used by the artwork components. */
+@custom-variant mobile (@media (max-width: 640px));
+
 @layer base {
   html { scrollbar-gutter: stable; }
   body { font-family: system-ui, sans-serif; line-height: 1.7; }

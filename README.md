@@ -23,6 +23,12 @@ npm run preview:cloudflare # Cloudflare環境で配信・404を確認（先にbu
 
 `src/generated/` と `public/generated/` は自動生成です。直接編集せず、Gitにも追加しません。初回の型チェック前には `npm run generate` を実行してください。
 
+## スタイル
+
+Tailwind CSS v4 を `@tailwindcss/vite` で組み込み、`src/style.css` から読み込んでいます。余白・配置・文字サイズ・レスポンシブなレイアウトは、Vueテンプレートのユーティリティクラスで指定します。
+
+`mobile:` は既存デザインに合わせた **640px以下** のカスタムバリアントです。標準の `sm:`（640px以上）とは適用方向が異なります。独自のガラス表現、背景・カルーセルの描画や状態変化、Markdown本文のスタイルはCSSで管理します。クラス名は動的に組み立てず、Tailwindが検出できる完全な文字列で記述してください。
+
 ## プロジェクトを追加
 
 1. JPEG・PNGを `content/images/projects/` に置く。
