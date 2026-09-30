@@ -1,7 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "yaml-portfolio",
+  "account_id": "dd55449a6d458eee5ce2e4d6cd5a3fe8",
   "compatibility_date": "2026-09-20",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "www.ampoi.dev", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",

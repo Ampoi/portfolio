@@ -77,18 +77,25 @@ Markdown内のHTTP(S)画像は外部URLのまま表示するため、最適化�
 
 ## Cloudflareで自動公開
 
-このリポジトリをGitHubまたはGitLabにpushしてから、CloudflareダッシュボードのWorkers & PagesでGitリポジトリを接続します。
+本番サイトは [www.ampoi.dev](https://www.ampoi.dev/) です。Cloudflare Workers Buildsに `Ampoi/portfolio` を接続し、`main` へのpushで自動公開します。
 
 - Worker名: `yaml-portfolio`（変更する場合は `wrangler.jsonc` の `name` と一致させる）
-- 本番ブランチ: 公開に使うブランチ（通常 `main`）
+- 本番ブランチ: `main`
 - ルートディレクトリ: リポジトリ直下
 - ビルドコマンド: `npm run build`
 - デプロイコマンド: `npx wrangler deploy`
-- Node.js: 24（`.node-version` を同梱）
+- Node.js: 24（`.node-version` とビルド環境変数 `NODE_VERSION=24`）
+- プレビューブランチの自動ビルド: 無効
 
 以降はコンテンツ変更を本番ブランチにpushすると再ビルド・公開されます。静的ファイルの場所は `wrangler.jsonc` の `assets.directory: ./dist` で指定済みです。Workerの実行コード、DB、Cloudflare Imagesの契約は必要ありません。
 
-手動公開する場合は認証後に `npm run deploy` を実行します。今回はアカウント接続・実際の公開は行っていません。
+手動公開する場合は `npx wrangler login` で認証後に `npm run deploy` を実行します。確認用URLは [yaml-portfolio.tange-toshihiro.workers.dev](https://yaml-portfolio.tange-toshihiro.workers.dev/) です。Cloudflareのアカウントと `www.ampoi.dev` のCustom Domainは `wrangler.jsonc` に記録しています。
+
+`ampoi.dev` はCloudflareのRedirect Rule `ampoi.dev to www (Cloudflare migration)` で `https://www.ampoi.dev` へ308転送します。条件は `(http.host eq "ampoi.dev")`、転送先は `concat("https://www.ampoi.dev", http.request.uri.path)`、クエリ文字列を維持します。HTTPとHTTPSの両方に適用します。apex DNSは `A @ 192.0.2.1`（Proxied / TTL Auto）で、Cloudflareが転送を処理するためのプレースホルダーです。このルールとapexの転送用DNSはダッシュボードで管理し、Wranglerのデプロイ対象には含めません。
+
+Vercelの自動デプロイは `vercel.json` の `git.deploymentEnabled: false` で停止します。以前のデプロイは復旧用に残しています。他の `*.ampoi.dev` サービスは移行対象に含めません。
+
+Vercelへ戻す場合は、`www.ampoi.dev` のWorker Custom Domainを解除して `CNAME www cname.vercel-dns.com`、apexを `A @ 76.76.21.21`（いずれもProxied / TTL Auto）に戻します。Cloudflareの転送ルールを無効化し、Vercelの自動デプロイ停止設定も解除します。再デプロイでCustom Domainが復活しないよう `wrangler.jsonc` の `routes` とCloudflareのGit連携も合わせて見直してください。
 
 存在しないURLは `public/404.html` をHTTP 404で返します。SPAフォールバックは使用しません。画像とViteのハッシュ付きアセットは長期キャッシュし、更新時はURLが変わります。
 
