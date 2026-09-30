@@ -1,12 +1,25 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { profileHero } from './hero-profile'
+import SocialLinks from './SocialLinks.vue'
 const emit = defineEmits<{ animationState: [playing: boolean] }>()
 const hero = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
 const painting = ref<HTMLImageElement>()
 const complete = ref(false)
 const canvasReady = ref(false)
+const scrollOpacity = ref(1)
+let scrollFrame = 0
+function updateScrollOpacity() {
+  scrollFrame = 0
+  const bounds = hero.value?.getBoundingClientRect()
+  if (!bounds?.height) return
+  // Fade over the first third of the hero, restoring it when returning to the top.
+  scrollOpacity.value = Math.max(0, Math.min(1, 1 + bounds.top / (bounds.height * .35)))
+}
+function onScroll() {
+  if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollOpacity)
+}
 const controller = new AbortController()
 let stopProfiling: (() => void) | undefined
 let motionPreference: MediaQueryList | undefined
@@ -41,10 +54,14 @@ const finish = () => {
   complete.value = true
   clearTimeout(loadingTimeout)
   unlockScroll?.()
+  updateScrollOpacity()
   controller.abort()
 }
 const onMotionPreference = () => { if (motionPreference?.matches) finish() }
 onMounted(async () => {
+  updateScrollOpacity()
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll)
   if (hero.value) stopProfiling = profileHero(hero.value)
   motionPreference = matchMedia('(prefers-reduced-motion: reduce)')
   motionPreference.addEventListener('change', onMotionPreference)
@@ -66,6 +83,9 @@ onMounted(async () => {
   }
 })
 onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
+  cancelAnimationFrame(scrollFrame)
   clearTimeout(loadingTimeout)
   unlockScroll?.()
   controller.abort()
@@ -75,7 +95,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section ref="hero" class="landscape-hero" :class="{ 'is-complete': complete }" aria-label="Ampoi">
+  <section ref="hero" class="landscape-hero" :class="{ 'is-complete': complete }" :style="{ '--hero-scroll-opacity': scrollOpacity }" aria-label="Ampoi">
     <div class="landscape-hero__backdrop" aria-hidden="true">
       <img
         ref="painting"
@@ -96,9 +116,13 @@ onBeforeUnmount(() => {
       />
       <noscript><img class="landscape-hero__fallback" src="/artwork/flower-hills.svg" alt="" /></noscript>
     </div>
+    <div class="landscape-hero__shade" aria-hidden="true" />
     <h1 class="landscape-hero__title">
       <img src="/artwork/ampoi-logo.svg" alt="Ampoi" width="560" height="229" />
     </h1>
+    <div class="landscape-hero__socials" :inert="!complete || scrollOpacity <= .01">
+      <SocialLinks class="landscape-hero__social-links" />
+    </div>
   </section>
 </template>
 
@@ -119,6 +143,24 @@ onBeforeUnmount(() => {
   background: #f7f7f7;
   pointer-events: none;
 }
+
+/* Separate the intro reveal from scroll opacity so they can run together. */
+.landscape-hero__shade {
+  position: absolute;
+  inset: 0;
+  opacity: var(--hero-scroll-opacity);
+  pointer-events: none;
+}
+.landscape-hero__shade::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 28%);
+}
+.landscape-hero__shade::before,
+.landscape-hero__social-links { opacity: 0; transition: opacity 1.4s ease; }
+.is-complete .landscape-hero__shade::before,
+.is-complete .landscape-hero__social-links { opacity: 1; }
 
 .landscape-hero__painting,
 .landscape-hero__canvas,
@@ -147,6 +189,19 @@ onBeforeUnmount(() => {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.landscape-hero__socials {
+  position: absolute;
+  bottom: clamp(32px, 7svh, 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: var(--hero-scroll-opacity);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landscape-hero__shade::before,
+  .landscape-hero__social-links { transition: none; }
 }
 
 @media (max-width: 640px) {

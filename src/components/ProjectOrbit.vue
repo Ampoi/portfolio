@@ -4,39 +4,10 @@ import type { Project } from '../content'
 import ContentImage from './ContentImage.vue'
 
 const props = defineProps<{ projects: Project[] }>()
-const concepts = [
-  ['komorebi', '日々の余白を、ひとつずつ。', 'Lifestyle', '#e2e7c9', '#64754c'],
-  ['ORBIT', '小さなアイデアが、めぐりはじめる。', 'Web application', '#e2dbef', '#766098'],
-  ['nami', '音と暮らす、穏やかな時間。', 'Music', '#c9dde4', '#447a8e'],
-  ['余白', '言葉のあいだにあるもの。', 'Editorial', '#e9e2d6', '#807361'],
-  ['MELLOW', '気分から見つける、新しい色。', 'Art direction', '#efd1bc', '#b57250'],
-  ['fern', '育てる楽しみを、もっと身近に。', 'Mobile application', '#cfdfc8', '#587456'],
-  ['SPOOL', 'つくる人と、つかう人をつなぐ。', 'Platform', '#ead3d7', '#a25e74'],
-  ['LUMA', 'ひらめきを、そっと灯す。', 'Product design', '#ede5b5', '#9d893b'],
-  ['ao', '遠くへ行きたくなる記録。', 'Travel', '#c9d9ed', '#587aa5'],
-  ['TONE', 'あなたのペースで整える。', 'Wellness', '#dfd4e6', '#8c6b9a'],
-  ['種と、', '小さなきっかけから始まる。', 'Brand identity', '#d9dec1', '#757c46'],
-  ['PAPER', '考えることを、手ざわりに。', 'Stationery', '#e9dace', '#a17c61'],
-  ['float', '思いつきを自由に浮かべる。', 'Creative tool', '#cce1df', '#4d8b87'],
-  ['MACHI', 'いつもの街の、まだ知らない顔。', 'Local community', '#e7d3be', '#a77647'],
-  ['日々', '何気ない一日を残しておく。', 'Journal', '#dce0e9', '#6d7994'],
-  ['ROOT', '好きなことから、広がる場所。', 'Community', '#d4deca', '#6e845c'],
-  ['mori', '深呼吸するように、選ぶ。', 'E-commerce', '#c4d9cd', '#497c62'],
-  ['HUSH', '静けさを持ち歩く。', 'Sound design', '#d9d5e4', '#7e7398'],
-  ['ARCH', '境界を越える、新しいかたち。', 'Architecture', '#e9ddc4', '#a08a59'],
-  ['つづく', '次のアイデアは、この先に。', 'Experiment', '#e4d2c9', '#a37767'],
-]
-// Design samples stay separate from published YAML content and article routes.
-const items = computed(() => [
-  ...concepts.map(([name, description, category, background, ink], index) => ({
-    slug: `orbit-placeholder-${index + 1}`, name: name!, description: description!,
-    category: category!, background: background!, ink: ink!, project: undefined as Project | undefined,
-  })),
-  ...props.projects.map(project => ({
-    slug: project.slug, name: project.name, description: project.description,
-    category: 'Project', background: '#e1e6d9', ink: '#63765c', project,
-  })),
-])
+const items = computed(() => props.projects.map(project => ({
+  slug: project.slug, name: project.name, description: project.description,
+  background: '#e1e6d9', ink: '#63765c', project,
+})))
 // Keep two full cycles on either side, then rebase between gestures.
 const repeatedItems = computed(() => Array.from({ length: 5 }, (_, cycle) =>
   items.value.map(item => ({ ...item, key: `${cycle}-${item.slug}` }))).flat())
@@ -45,12 +16,12 @@ const position = ref(items.value.length * 2)
 const stride = ref(370)
 const radius = ref(1800)
 const physicalIndex = computed(() => Math.round(position.value))
-const active = computed(() => ((physicalIndex.value % items.value.length) + items.value.length) % items.value.length)
+const active = computed(() => items.value.length ? ((physicalIndex.value % items.value.length) + items.value.length) % items.value.length : 0)
 const reducedMotion = ref(false)
 const imageColors = ref<Record<string, string>>({})
 const frameColor = computed(() => {
-  const item = items.value[active.value]!
-  return imageColors.value[item.slug] ?? item.ink
+  const item = items.value[active.value]
+  return item ? imageColors.value[item.slug] ?? item.ink : '#63765c'
 })
 
 function sampleImageColor(event: Event, slug: string) {
@@ -95,7 +66,7 @@ function updatePosition() {
 function settle() {
   clearTimeout(settleTimer)
   const element = scroller.value
-  if (!element || drag || navigationFrame) return
+  if (!element || !items.value.length || drag || navigationFrame) return
   const current = element.scrollLeft / stride.value
   const logical = ((current % items.value.length) + items.value.length) % items.value.length
   const destination = (items.value.length * 2 + logical) * stride.value
@@ -224,62 +195,58 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="project-orbit" role="region" aria-roledescription="カルーセル" aria-label="プロジェクト一覧">
-    <h2 id="projects-heading" class="project-title">PROJECT</h2>
-    <div class="orbit-stage">
-      <ul ref="scroller" class="orbit-scroller" tabindex="0" aria-label="横スクロールでプロジェクトを表示。左右矢印キーでも移動できます。"
-        @wheel.passive="cancelNavigation" @touchstart.passive="cancelNavigation" @scroll.passive="onScroll" @scrollend="settle" @keydown="onKeydown" @pointerdown="pointerDown" @pointermove="pointerMove"
+    <div class="project-sheet">
+      <h2 id="projects-heading" class="project-title">PROJECT</h2>
+      <p v-if="!items.length" class="py-6 text-center">まだプロジェクトはありません。</p>
+      <div v-show="items.length" class="orbit-stage" :style="{ '--frame-color': frameColor }">
+        <ul ref="scroller" class="orbit-scroller" tabindex="0" aria-label="横スクロールでプロジェクトを表示。左右矢印キーでも移動できます。"
+          @wheel.passive="cancelNavigation" @touchstart.passive="cancelNavigation" @scroll.passive="onScroll" @scrollend="settle" @keydown="onKeydown" @pointerdown="pointerDown" @pointermove="pointerMove"
+          @pointerup="pointerUp" @pointercancel="pointerUp" @lostpointercapture="pointerUp" @click.capture="onClick" @dragstart.prevent>
+          <li v-for="(item, index) in repeatedItems" :key="item.key" class="orbit-slot" :aria-hidden="index !== physicalIndex" :aria-label="`${index % items.length + 1} / ${items.length}`">
+            <div class="orbit-art" :class="{ 'is-active': index === physicalIndex }" :style="artStyle(index)">
+              <ContentImage :image="item.project.image" :alt="item.name" @load="sampleImageColor($event, item.slug)" />
+            </div>
+          </li>
+        </ul>
+        <div class="orbit-frame" aria-hidden="true" />
+      </div>
+      <div v-show="items.length" class="orbit-details" @pointerdown="pointerDown" @pointermove="pointerMove"
         @pointerup="pointerUp" @pointercancel="pointerUp" @lostpointercapture="pointerUp" @click.capture="onClick" @dragstart.prevent>
-        <li v-for="(item, index) in repeatedItems" :key="item.key" class="orbit-slot" :aria-hidden="index !== physicalIndex" :aria-label="`${index % items.length + 1} / ${items.length}`">
-          <div class="orbit-art" :class="[`orbit-art--${(index % items.length) % 5}`, { 'is-active': index === physicalIndex }]" :style="artStyle(index)">
-            <ContentImage v-if="item.project" :image="item.project.image" :alt="item.name" @load="sampleImageColor($event, item.slug)" />
-            <template v-else>
-              <span class="art-edition">DESIGN STUDY / {{ String(index % items.length + 1).padStart(2, '0') }}</span>
-              <div class="art-shape" aria-hidden="true"><i /><i /><i /></div>
-              <span class="art-wordmark">{{ item.name }}</span>
-              <span class="art-footnote">A LITTLE IDEA, TAKING SHAPE.</span>
-            </template>
-          </div>
-        </li>
-      </ul>
-      <div class="orbit-frame" aria-hidden="true" :style="{ borderColor: frameColor }" />
-    </div>
-    <div class="orbit-details" @pointerdown="pointerDown" @pointermove="pointerMove"
-      @pointerup="pointerUp" @pointercancel="pointerUp" @lostpointercapture="pointerUp" @click.capture="onClick" @dragstart.prevent>
-      <div class="orbit-details-track" :style="{ transform: `translate3d(${-position * 100}%, 0, 0)` }">
-        <article v-for="(item, index) in repeatedItems" :key="item.key" class="orbit-detail" :aria-hidden="index !== physicalIndex" :inert="index !== physicalIndex">
-          <div class="flex items-center justify-between text-[9px] tracking-[.05em] text-[#627265]">
-            <span>{{ item.category }}</span>
-            <span v-if="!item.project" class="text-[7px] tracking-[.12em] opacity-70">PLACEHOLDER</span>
-          </div>
-          <h3 class="mt-1.25 text-[23px] leading-[1.4] font-semibold tracking-[.025em]">{{ item.name }}</h3>
-          <p class="mt-1.25 text-[12px] leading-[1.85]">{{ item.description }}</p>
-          <div v-if="item.project" class="orbit-card__links">
-            <a :href="item.project.link" :tabindex="index === physicalIndex ? 0 : -1">プロジェクトを見る ↗</a>
-            <RouterLink v-if="item.project.articleHtml !== undefined" :to="`/projects/${item.project.slug}/`" :tabindex="index === physicalIndex ? 0 : -1">詳細記事 →</RouterLink>
-          </div>
-          <div v-else class="orbit-card__footer"><span>CONCEPT {{ String(index % items.length + 1).padStart(2, '0') }}</span><span aria-hidden="true">↗</span></div>
-        </article>
+        <div class="orbit-details-track" :style="{ transform: `translate3d(${-position * 100}%, 0, 0)` }">
+          <article v-for="(item, index) in repeatedItems" :key="item.key" class="orbit-detail" :aria-hidden="index !== physicalIndex" :inert="index !== physicalIndex">
+            <h3 class="text-[23px] leading-[1.4] font-semibold tracking-[.025em]">{{ item.name }}</h3>
+            <p class="mt-1.25 text-[12px] leading-[1.85]">{{ item.description }}</p>
+            <div class="orbit-card__links">
+              <a :href="item.project.link" :tabindex="index === physicalIndex ? 0 : -1">プロジェクトを見る ↗</a>
+              <RouterLink v-if="item.project.articleHtml !== undefined" :to="`/projects/${item.project.slug}/`" :tabindex="index === physicalIndex ? 0 : -1">詳細記事 →</RouterLink>
+            </div>
+          </article>
+        </div>
       </div>
-    </div>
-    <div class="mt-6 flex items-center justify-center gap-7 mobile:gap-5.5">
-      <button type="button" class="orbit-arrow" aria-label="前のプロジェクト" @click="goTo(physicalIndex - 1)">←</button>
-      <div class="grid justify-items-center gap-2.5">
-        <span class="text-[13px] tracking-[.12em] tabular-nums" aria-live="polite" aria-atomic="true">{{ String(active + 1).padStart(2, '0') }} <span class="opacity-45">/ {{ String(items.length).padStart(2, '0') }}</span></span>
-        <div class="orbit-ticks flex h-2.5 items-center gap-1.25" aria-hidden="true"><span v-for="(_, index) in items" :key="index" :class="{ 'is-active': index === active }" /></div>
+      <div v-show="items.length" class="orbit-controls flex items-center justify-center gap-7 mobile:gap-5.5">
+        <button type="button" class="orbit-arrow" aria-label="前のプロジェクト" @click="goTo(physicalIndex - 1)">←</button>
+        <div class="grid justify-items-center gap-2.5">
+          <span class="text-[13px] tracking-[.12em] tabular-nums" aria-live="polite" aria-atomic="true">{{ String(active + 1).padStart(2, '0') }} <span class="opacity-45">/ {{ String(items.length).padStart(2, '0') }}</span></span>
+          <div class="orbit-ticks flex h-2.5 items-center gap-1.25" aria-hidden="true"><span v-for="(_, index) in items" :key="index" :class="{ 'is-active': index === active }" /></div>
+        </div>
+        <button type="button" class="orbit-arrow" aria-label="次のプロジェクト" @click="goTo(physicalIndex + 1)">→</button>
       </div>
-      <button type="button" class="orbit-arrow" aria-label="次のプロジェクト" @click="goTo(physicalIndex + 1)">→</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.project-orbit { --card-width: 330px; --art-height: 220px; --art-top: 112px; --frame-width: 12px; --card-gap: 48px; padding-top: 6px; }
+.project-orbit { --card-width: 330px; --art-height: 220px; --art-top: 64px; --frame-width: 12px; --sheet-padding: 28px; --card-gap: 48px; padding-top: 6px; }
+/* One continuous white sheet, with the carousel extending beyond its sides. */
+.project-sheet { position: relative; isolation: isolate; }
+.project-sheet::before { content: ''; position: absolute; z-index: -1; inset: 0; width: calc(var(--card-width) + var(--sheet-padding) * 2); margin-inline: auto; background: #fff; }
 .project-title {
   position: relative;
   z-index: 2;
-  margin: 0 24px 24px;
-  /* Anchor the heading's lower edge 16px above the centered card's frame. */
-  transform: translateY(calc(var(--art-top) - var(--frame-width) + 8px));
+  width: calc(var(--card-width) + var(--sheet-padding) * 2);
+  margin: 0 auto calc(var(--frame-width) - var(--art-top));
+  padding: 28px 0 24px;
+  background: #fff;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(36px, 5vw, 64px);
   font-weight: 400;
@@ -289,38 +256,56 @@ onBeforeUnmount(() => {
   text-align: center;
 }
 .orbit-stage { position: relative; overflow: hidden; }
-.orbit-scroller { position: relative; display: flex; gap: var(--card-gap); height: calc(var(--art-top) + var(--art-height) + var(--frame-width) + 22px); padding: var(--art-top) max(0px, calc((100% - var(--card-width)) / 2)) 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; -webkit-tap-highlight-color: transparent; }
+/* Keep the frame opening colored behind the moving artwork. */
+.orbit-stage::before {
+  content: '';
+  position: absolute;
+  top: var(--art-top);
+  left: 50%;
+  width: var(--card-width);
+  height: var(--art-height);
+  transform: translateX(-50%);
+  background: var(--frame-color);
+  pointer-events: none;
+  transition: background-color .3s ease;
+}
+/* Continue the white mat around the opening so passing cards stay behind
+   the entire sheet, rather than revealing the heading's separate rectangle. */
+.orbit-stage::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: calc(var(--card-width) + var(--sheet-padding) * 2);
+  margin-inline: auto;
+  border-style: solid;
+  border-color: #fff;
+  border-width: calc(var(--art-top) - var(--frame-width)) calc(var(--sheet-padding) - var(--frame-width)) calc(var(--sheet-padding) - var(--frame-width));
+  pointer-events: none;
+}
+.orbit-scroller { position: relative; display: flex; gap: var(--card-gap); height: calc(var(--art-top) + var(--art-height) + var(--sheet-padding)); padding: var(--art-top) max(0px, calc((100% - var(--card-width)) / 2)) 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; -webkit-tap-highlight-color: transparent; }
 .orbit-scroller::-webkit-scrollbar { display: none; }
-.orbit-scroller:focus-visible { outline: 2px solid #547359; outline-offset: -5px; border-radius: 24px; }
+.orbit-scroller:focus-visible { outline: 2px solid #547359; outline-offset: -5px; }
 .orbit-scroller.is-animating { scroll-snap-type: none; }
 .orbit-scroller.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
 .orbit-slot { flex: 0 0 var(--card-width); min-width: 0; height: var(--art-height); scroll-snap-align: center; }
-.orbit-art { height: var(--art-height); position: relative; overflow: hidden; border-radius: 10px; background: var(--art-background); color: var(--art-ink); box-shadow: 0 10px 22px rgb(23 49 33 / 12%); transform-origin: 50% 50%; }
+.orbit-art { height: var(--art-height); position: relative; overflow: hidden; border-radius: 0; background: var(--art-background); color: var(--art-ink); box-shadow: 0 10px 22px rgb(23 49 33 / 12%); transform-origin: 50% 50%; }
 /* The frame's inner edge exactly matches the centered, unrotated artwork. */
-.orbit-frame { position: absolute; z-index: 1; top: calc(var(--art-top) - var(--frame-width)); left: 50%; width: calc(var(--card-width) + var(--frame-width) * 2); height: calc(var(--art-height) + var(--frame-width) * 2); transform: translateX(-50%); border: var(--frame-width) solid; border-radius: calc(10px + var(--frame-width)); box-shadow: 0 10px 24px rgb(23 49 33 / 15%), inset 0 0 0 1px rgb(255 255 255 / 30%); pointer-events: none; transition: border-color .3s ease; }
-.orbit-details { width: calc(var(--card-width) + var(--frame-width) * 2); margin: 0 auto; overflow: hidden; border: 1px solid rgb(255 255 255 / 75%); border-radius: 20px; background: rgb(249 252 247 / 86%); box-shadow: 0 10px 28px rgb(23 49 33 / 8%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); cursor: grab; touch-action: pan-y; }
+.orbit-frame { position: absolute; z-index: 1; top: calc(var(--art-top) - var(--frame-width)); left: 50%; width: calc(var(--card-width) + var(--frame-width) * 2); height: calc(var(--art-height) + var(--frame-width) * 2); transform: translateX(-50%); border: var(--frame-width) solid var(--frame-color); border-radius: 0; pointer-events: none; transition: border-color .3s ease; }
+.orbit-details { width: calc(var(--card-width) + var(--sheet-padding) * 2); margin: 0 auto; overflow: hidden; background: #fff; cursor: grab; touch-action: pan-y; }
 .orbit-details-track { display: flex; align-items: stretch; }
-.orbit-detail { flex: 0 0 100%; min-width: 0; padding: 18px 22px; overflow-wrap: anywhere; }
-.orbit-art :deep(img) { width: 100%; height: 100%; object-fit: cover; }
-.art-edition, .art-footnote { position: absolute; z-index: 1; left: 17px; font-size: 7px; letter-spacing: .15em; }
-.art-edition { top: 14px; }.art-footnote { bottom: 13px; font-size: 6px; }
-.art-wordmark { position: absolute; inset: 0; display: grid; place-items: center; font-family: Georgia, 'Times New Roman', serif; font-size: 43px; letter-spacing: -.045em; }
-.art-shape { position: absolute; width: 150px; height: 150px; left: calc(50% - 75px); top: 28px; opacity: .25; }
-.art-shape i { position: absolute; inset: 0; border: 1px solid currentColor; border-radius: 50%; }
-.art-shape i:nth-child(2) { transform: translateX(-28px); }.art-shape i:nth-child(3) { transform: translateX(28px); }
-.orbit-art--1 .art-shape { transform: rotate(-35deg); }.orbit-art--1 .art-shape i { border-width: 16px; transform: scaleY(.45); }.orbit-art--1 .art-shape i:nth-child(2) { transform: scaleY(.7); }.orbit-art--1 .art-shape i:nth-child(3) { transform: scaleY(1); }
-.orbit-art--2 .art-shape i { border-radius: 44% 56% 65% 35%; background: currentColor; transform: rotate(30deg); }.orbit-art--2 .art-shape i:nth-child(2) { transform: translate(55px, 55px); }.orbit-art--2 .art-shape i:nth-child(3) { transform: translate(-65px, 75px); }
-.orbit-art--3 .art-shape { transform: rotate(45deg); }.orbit-art--3 .art-shape i { border-radius: 2px; }.orbit-art--3 .art-shape i:nth-child(2) { transform: scale(.78); }.orbit-art--3 .art-shape i:nth-child(3) { transform: scale(.55); }
-.orbit-art--4 .art-shape i { border-width: 25px; }.orbit-art--4 .art-shape i:nth-child(2) { transform: translateX(-95px); }.orbit-art--4 .art-shape i:nth-child(3) { transform: translateX(95px); }
-.orbit-card__footer, .orbit-card__links { display: flex; justify-content: space-between; align-items: center; margin-top: 13px; padding-top: 9px; border-top: 1px solid rgb(72 97 70 / 12%); font-size: 8px; letter-spacing: .1em; }
-.orbit-card__footer > :last-child { font-size: 16px; line-height: 1; }.orbit-card__links { font-size: 10px; letter-spacing: 0; }
-.orbit-arrow { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 80%); border-radius: 50%; background: rgb(249 252 247 / 65%); font-size: 20px; cursor: pointer; transition: background .2s; }
+.orbit-detail { flex: 0 0 100%; min-width: 0; padding: 0 var(--sheet-padding) 20px; overflow-wrap: anywhere; }
+.orbit-art :deep(img) { width: 100%; height: 100%; border-radius: 0; object-fit: cover; }
+.orbit-card__links { display: flex; justify-content: space-between; align-items: center; margin-top: 13px; padding-top: 9px; border-top: 1px solid rgb(72 97 70 / 12%); font-size: 8px; letter-spacing: .1em; }
+.orbit-card__links { font-size: 10px; letter-spacing: 0; }
+.orbit-controls { position: relative; padding: 0 0 28px; }
+.orbit-arrow { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgb(72 97 70 / 20%); border-radius: 50%; background: #f3f6ee; font-size: 20px; cursor: pointer; transition: background .2s; }
 .orbit-arrow:hover { background: #f9fcf7; }.orbit-arrow:focus-visible { outline: 2px solid #547359; outline-offset: 4px; }
 .orbit-ticks > span { width: 2px; height: 4px; background: #254330; opacity: .2; }.orbit-ticks > .is-active { height: 10px; opacity: .85; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .orbit-details { background: #f3f6ee; } }
 @media (max-width: 640px) {
-  .project-orbit { --card-width: min(280px, calc(100vw - 88px)); --art-height: 190px; --art-top: 86px; --frame-width: 10px; --card-gap: 36px; }
-  .orbit-detail { padding: 16px 20px; }
+  .project-orbit { --card-width: min(280px, calc(100vw - 88px)); --art-height: 190px; --art-top: 48px; --frame-width: 10px; --sheet-padding: 22px; --card-gap: 36px; }
+  .project-title { padding: 24px 0 20px; }
+  .orbit-detail { padding-bottom: 20px; }
 }
-@media (prefers-reduced-motion: reduce) { .orbit-arrow, .orbit-frame { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .orbit-arrow, .orbit-frame, .orbit-stage::before { transition: none; } }
 </style>

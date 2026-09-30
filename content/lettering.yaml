@@ -1,4 +1,68 @@
-- slug: example
-  name: 作字のサンプル
-  description: 動作確認用の透過PNGです。自分の作字画像に差し替えてください。
-  image: images/lettering/example.png
+# Images and original captions: https://github.com/Ampoi/portfolio/tree/v2
+# public/images/works, components/index/sakuji.vue, components/index/mrsSakuji.vue
+
+# ア・プリオリ: https://github.com/Ampoi/portfolio/blob/892438c98eadedf5038c585d3b0c6dfd2b09a6d7/public/images/works/APRIORI.webp
+- slug: apriori
+  name: "ア・プリオリ"
+  description: "Mrs. GREEN APPLEの「ア・プリオリ」の作字です。本当にいい曲なので聞いてみてください。"
+  image: images/lettering/apriori.webp
+- slug: afternoon
+  name: "Afternoon"
+  description: "Mrs. GREEN APPLEの「Afternoon」の作字です。本当にいい曲なので聞いてみてください。"
+  image: images/lettering/afternoon.webp
+- slug: akeome
+  name: "あけおめ"
+  description: "2023年度元旦のやつです。"
+  image: images/lettering/akeome.webp
+- slug: attitude
+  name: "Attitude"
+  description: "Mrs. GREEN APPLEの「Attitude」の作字です。"
+  image: images/lettering/attitude.webp
+- slug: doryoku
+  name: "努力"
+  description: "KICK BACKの替え歌みたいなのでめっちゃ努力って入ってるやつがあったので作ってみました。特に意味はないです。"
+  image: images/lettering/doryoku.webp
+- slug: gendouki
+  name: "原動機"
+  description: "昭和感出したくて作ってみました。"
+  image: images/lettering/gendouki.webp
+- slug: kaijunohanauta
+  name: "怪獣の花唄"
+  description: "5月くらいまで獣って字の左側に線が入ってるってこと知りませんでした。漢字間違ってます。"
+  image: images/lettering/kaijunohanauta.webp
+- slug: loneliness
+  name: "Loneliness"
+  description: "Mrs. GREEN APPLEの「Loneliness」の作字です。"
+  image: images/lettering/loneliness.webp
+- slug: lovin
+  name: "lovin'"
+  description: "Mrs. GREEN APPLEの「lovin'」の作字です。歌がめっちゃ可愛いので聞いてみてください。"
+  image: images/lettering/lovin.webp
+- slug: mitibiki
+  name: "導"
+  description: "方べきの定理に見えるとあまり評価は良くなかったです。"
+  image: images/lettering/mitibiki.webp
+- slug: propose
+  name: "ProPose"
+  description: "Mrs. GREEN APPLEの「ProPose」の作字です。本当にいい曲なので聞いてみてください。"
+  image: images/lettering/propose.webp
+- slug: roudou
+  name: "働"
+  description: "友達とやっていたマイクラの労働サーバーのアイコンです。"
+  image: images/lettering/roudou.webp
+- slug: seitokai
+  name: "生徒会"
+  description: "とりあえず作ってみただけです。特に生徒会への忠誠心とかはありません。"
+  image: images/lettering/seitokai.webp
+- slug: tukimasiteha
+  name: "ツキマシテハ"
+  description: "Mrs. GREEN APPLEの「ツキマシテハ」の作字です。本当にいい曲なので聞いてみてください。"
+  image: images/lettering/tukimasiteha.webp
+- slug: aufheben
+  name: "アウフヘーベン"
+  description: "Mrs. GREEN APPLEの「アウフヘーベン」の作字です。本当にいい曲なので聞いてみてください。"
+  image: images/lettering/aufheben.webp
+- slug: kudari
+  name: "クダリ"
+  description: "Mrs. GREEN APPLEの「クダリ」の作字です。本当にいい曲なので聞いてみてください。"
+  image: images/lettering/kudari.webp

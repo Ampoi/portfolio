@@ -2,6 +2,10 @@
 
 Vue 3 / TypeScript / Vite / Tailwind CSS のポートフォリオ基盤です。YAML・Markdown・元画像からHTMLとWebPを生成し、Cloudflare Workers Static Assetsで配信します。丘のアニメーションを背景に、半透明のグラスカードで作品を表示します。
 
+## 過去のバージョン
+
+現在の実装は `main` で管理します。移行前の実装は [codex/archive-main-2026-10-01](https://github.com/Ampoi/portfolio/tree/codex/archive-main-2026-10-01)、従来の v2 は [v2](https://github.com/Ampoi/portfolio/tree/v2) に保存しています。旧 `main` と今回のローカル開発のコミット履歴も引き継いでいます。
+
 ## 開発
 
 Node.js 24 と npm を使用します。
@@ -31,7 +35,7 @@ Tailwind CSS v4 を `@tailwindcss/vite` で組み込み、`src/style.css` から
 
 ## プロジェクトを追加
 
-1. JPEG・PNGを `content/images/projects/` に置く。
+1. JPEG・PNG・WebPを `content/images/projects/` に置く。
 2. `content/projects.yaml` に項目を追加する。
 3. 記事が必要ならMarkdownを `content/articles/` に置き、`article` に指定する。
 
@@ -98,7 +102,7 @@ Markdown内のHTTP(S)画像は外部URLのまま表示するため、最適化�
 - 草原SVGの差し替え・速度調整: `scripts/prepare-landscape.mjs` を変更し、`node scripts/prepare-landscape.mjs /path/to/original.svg` を実行します。元SVGとGPU用の `.bin`・`.json` をまとめて生成します。元SVGの座標・色・太さ・重なり順・丘のクリップ境界は保持されます。
 - 開発時のフレーム計測: `/?hero-profile` を開くと6秒間のフレーム間隔を計測し、`.landscape-hero` の `data-frame-profile` に結果を記録します。本番では計測しません。
 - アニメーション中はスクロールと一覧へのフォーカス移動を制限し、完了・読み込み失敗・画面遷移時に解除します。読み込みが停滞した場合も12秒で静止画に切り替えます。丘の背景はビューポートに固定され、一覧をスクロールしても背面に残ります。
-- 一覧: `src/pages/Home.vue`。プロジェクトは `src/components/ProjectOrbit.vue` の円弧カルーセルで表示します。20件のデザイン用プレースホルダーとYAMLのプロジェクトを、左右に無限ループする横スクロールで閲覧できます。中央に1件ずつスナップし、トラックパッド・タッチ・マウスドラッグ・左右ボタン・矢印キーに対応します。見える範囲だけ円弧状に移動・回転し、動きを減らすOS設定では直線配置に切り替えます。仮データはコンポーネント内の `concepts` に分離してあり、YAMLや記事ルートには追加しません。作字はグラスカードのグリッドを維持し、スマートフォンでは1列になります。
+- 一覧: `src/pages/Home.vue`。プロジェクトは `src/components/ProjectOrbit.vue` の円弧カルーセルで表示します。YAMLに登録したプロジェクトを、左右に無限ループする横スクロールで閲覧できます。中央に1件ずつスナップし、トラックパッド・タッチ・マウスドラッグ・左右ボタン・矢印キーに対応します。見える範囲だけ円弧状に移動・回転し、動きを減らすOS設定では直線配置に切り替えます。プロジェクトの名前・説明・画像・リンクは `content/projects.yaml` で管理します。作字はグラスカードのグリッドを維持し、スマートフォンでは1列になります。
 - 詳細記事: `src/pages/Article.vue`
 - フッター: `src/components/ReededFooter.vue`。事前生成した屈折画像を固定背景と同じ `object-fit: cover`・中央配置で表示し、フッターの範囲で切り抜きます。スクロール時のCanvas描画・JavaScriptイベント処理・CSSブラーはありません。ロゴとリンクは歪ませずに表示し、白い膜・ハイライト・着色も重ねません。
 - 屈折画像の生成: `scripts/prepare-reeded-glass.mjs` が `public/artwork/flower-hills.svg` を読み、画像座標上で縦リブの拡大・圧縮と、各リブの右端だけを持ち上げる非対称の湾曲、軽いブラーを適用します。元画像と同じ縦横比で1122px・2244px幅のWebPを作り、表示サイズと画面密度に応じてブラウザが選びます。リブ幅は画像と一緒に拡大縮小されます。`settings.pitch`（リブ幅）、`bend`（湾曲）、`blurMin`（左端0.25px）・`blur`（右端1.2px、いずれも元画像基準）で調整できます。ブラーは各リブの左から右へ滑らかに強くなります。
