@@ -8,7 +8,7 @@ const items = computed(() => props.projects.map(project => ({
   slug: project.slug, name: project.name, description: project.description,
   background: '#e1e6d9', ink: '#63765c', project,
 })))
-// Keep two full cycles on either side, then rebase between gestures.
+// Keep spare cycles on both sides and rebase before a gesture reaches an edge.
 const repeatedItems = computed(() => Array.from({ length: 5 }, (_, cycle) =>
   items.value.map(item => ({ ...item, key: `${cycle}-${item.slug}` }))).flat())
 const scroller = ref<HTMLUListElement>()
@@ -61,23 +61,43 @@ function updatePosition() {
   if (!element) return
   // Native snap can fire a scroll event before ResizeObserver on a breakpoint change.
   if (element.clientWidth !== measuredWidth) { measure(); return }
+  if (!navigationFrame) rebase()
   position.value = element.scrollLeft / stride.value
+}
+function rebase(force = false) {
+  const element = scroller.value
+  const count = items.value.length
+  if (!element || !count) return
+  const current = element.scrollLeft / stride.value
+  if (!force && current >= count && current < count * 4) return
+  const logical = ((current % count) + count) % count
+  const destination = (count * 2 + logical) * stride.value
+  const shift = destination - element.scrollLeft
+  if (Math.abs(shift) < 1) return
+  // Preserve fractional progress; native snap must not round the rebase.
+  element.classList.add('is-rebasing')
+  element.scrollTo({ left: destination, behavior: 'instant' })
+  // A held drag continues from the same pointer position after each full cycle.
+  if (drag) drag.scroll += shift
 }
 function settle() {
   clearTimeout(settleTimer)
   const element = scroller.value
   if (!element || !items.value.length || drag || navigationFrame) return
-  const current = element.scrollLeft / stride.value
-  const logical = ((current % items.value.length) + items.value.length) % items.value.length
-  const destination = (items.value.length * 2 + logical) * stride.value
-  if (Math.abs(element.scrollLeft - destination) > 1) {
-    element.scrollTo({ left: destination, behavior: 'instant' })
-    updatePosition()
+  const nearest = Math.round(element.scrollLeft / stride.value)
+  if (element.classList.contains('is-rebasing') && Math.abs(element.scrollLeft - nearest * stride.value) > 1) {
+    goTo(nearest)
+    return
   }
+  rebase(true)
+  element.classList.remove('is-rebasing')
+  updatePosition()
 }
 function onScroll() {
   clearTimeout(settleTimer)
   settleTimer = setTimeout(settle, 180)
+  // Rebase immediately, without waiting for scrollend or the idle timer.
+  if (!navigationFrame) rebase()
   if (frame) return
   frame = requestAnimationFrame(() => { updatePosition(); frame = 0 })
 }
@@ -116,12 +136,17 @@ function goTo(index: number) {
   const element = scroller.value
   if (!element) return
   cancelNavigation()
-  const next = Math.max(0, Math.min(repeatedItems.value.length - 1, index))
+  const previousScroll = element.scrollLeft
+  rebase()
+  // Rapid button/key input can replace an animation before it gets to settle.
+  const rebasedIndex = index + Math.round((element.scrollLeft - previousScroll) / stride.value)
+  const next = Math.max(0, Math.min(repeatedItems.value.length - 1, rebasedIndex))
   const start = element.scrollLeft
   const destination = next * stride.value
   if (reducedMotion.value) {
     element.scrollLeft = destination
     updatePosition()
+    settle()
     return
   }
   // Animate the shared position so photo and caption remain synchronized even
@@ -181,7 +206,8 @@ onMounted(() => {
   syncMotion()
   motionQuery.addEventListener('change', syncMotion)
   observer = new ResizeObserver(measure)
-  observer.observe(scroller.value!)
+  // Horizontal padding keeps the content box fixed; observe the full viewport.
+  observer.observe(scroller.value!, { box: 'border-box' })
   measure()
 })
 onBeforeUnmount(() => {
@@ -204,7 +230,8 @@ onBeforeUnmount(() => {
           @pointerup="pointerUp" @pointercancel="pointerUp" @lostpointercapture="pointerUp" @click.capture="onClick" @dragstart.prevent>
           <li v-for="(item, index) in repeatedItems" :key="item.key" class="orbit-slot" :aria-hidden="index !== physicalIndex" :aria-label="`${index % items.length + 1} / ${items.length}`">
             <div class="orbit-art" :class="{ 'is-active': index === physicalIndex }" :style="artStyle(index)">
-              <ContentImage :image="item.project.image" :alt="item.name" @load="sampleImageColor($event, item.slug)" />
+              <ContentImage :image="item.project.image" :alt="item.name" loading="eager"
+                sizes="(max-width: 640px) 280px, 330px" @load="sampleImageColor($event, item.slug)" />
             </div>
           </li>
         </ul>
@@ -236,7 +263,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.project-orbit { --card-width: 330px; --art-height: 220px; --art-top: 64px; --frame-width: 12px; --sheet-padding: 28px; --card-gap: 48px; padding-top: 6px; }
+.project-orbit { --card-width: 330px; --art-height: 220px; --art-top: 64px; --orbit-headroom: max(160px, 15vw); --frame-width: 12px; --sheet-padding: 28px; --card-gap: 48px; padding-top: 6px; }
 /* One continuous white sheet, with the carousel extending beyond its sides. */
 .project-sheet { position: relative; isolation: isolate; }
 .project-sheet::before { content: ''; position: absolute; z-index: -1; inset: 0; width: calc(var(--card-width) + var(--sheet-padding) * 2); margin-inline: auto; background: #fff; }
@@ -244,7 +271,7 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 2;
   width: calc(var(--card-width) + var(--sheet-padding) * 2);
-  margin: 0 auto calc(var(--frame-width) - var(--art-top));
+  margin: 0 auto;
   padding: 28px 0 24px;
   background: #fff;
   font-family: Georgia, 'Times New Roman', serif;
@@ -255,12 +282,14 @@ onBeforeUnmount(() => {
   text-indent: .12em;
   text-align: center;
 }
-.orbit-stage { position: relative; overflow: hidden; }
+/* Extend both clipping boxes upward for the rotated cards. The negative margin
+   keeps the artwork and the rest of the white sheet in their original positions. */
+.orbit-stage { position: relative; overflow: hidden; margin-top: calc(var(--frame-width) - var(--art-top) - var(--orbit-headroom)); }
 /* Keep the frame opening colored behind the moving artwork. */
 .orbit-stage::before {
   content: '';
   position: absolute;
-  top: var(--art-top);
+  top: calc(var(--orbit-headroom) + var(--art-top));
   left: 50%;
   width: var(--card-width);
   height: var(--art-height);
@@ -275,7 +304,7 @@ onBeforeUnmount(() => {
   content: '';
   position: absolute;
   z-index: 1;
-  inset: 0;
+  inset: var(--orbit-headroom) 0 0;
   width: calc(var(--card-width) + var(--sheet-padding) * 2);
   margin-inline: auto;
   border-style: solid;
@@ -283,15 +312,15 @@ onBeforeUnmount(() => {
   border-width: calc(var(--art-top) - var(--frame-width)) calc(var(--sheet-padding) - var(--frame-width)) calc(var(--sheet-padding) - var(--frame-width));
   pointer-events: none;
 }
-.orbit-scroller { position: relative; display: flex; gap: var(--card-gap); height: calc(var(--art-top) + var(--art-height) + var(--sheet-padding)); padding: var(--art-top) max(0px, calc((100% - var(--card-width)) / 2)) 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; -webkit-tap-highlight-color: transparent; }
+.orbit-scroller { position: relative; display: flex; gap: var(--card-gap); height: calc(var(--orbit-headroom) + var(--art-top) + var(--art-height) + var(--sheet-padding)); padding: calc(var(--orbit-headroom) + var(--art-top)) max(0px, calc((100% - var(--card-width)) / 2)) 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; -webkit-tap-highlight-color: transparent; }
 .orbit-scroller::-webkit-scrollbar { display: none; }
 .orbit-scroller:focus-visible { outline: 2px solid #547359; outline-offset: -5px; }
-.orbit-scroller.is-animating { scroll-snap-type: none; }
+.orbit-scroller.is-animating, .orbit-scroller.is-rebasing { scroll-snap-type: none; }
 .orbit-scroller.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
 .orbit-slot { flex: 0 0 var(--card-width); min-width: 0; height: var(--art-height); scroll-snap-align: center; }
 .orbit-art { height: var(--art-height); position: relative; overflow: hidden; border-radius: 0; background: var(--art-background); color: var(--art-ink); box-shadow: 0 10px 22px rgb(23 49 33 / 12%); transform-origin: 50% 50%; }
 /* The frame's inner edge exactly matches the centered, unrotated artwork. */
-.orbit-frame { position: absolute; z-index: 1; top: calc(var(--art-top) - var(--frame-width)); left: 50%; width: calc(var(--card-width) + var(--frame-width) * 2); height: calc(var(--art-height) + var(--frame-width) * 2); transform: translateX(-50%); border: var(--frame-width) solid var(--frame-color); border-radius: 0; pointer-events: none; transition: border-color .3s ease; }
+.orbit-frame { position: absolute; z-index: 1; top: calc(var(--orbit-headroom) + var(--art-top) - var(--frame-width)); left: 50%; width: calc(var(--card-width) + var(--frame-width) * 2); height: calc(var(--art-height) + var(--frame-width) * 2); transform: translateX(-50%); border: var(--frame-width) solid var(--frame-color); border-radius: 0; pointer-events: none; transition: border-color .3s ease; }
 .orbit-details { width: calc(var(--card-width) + var(--sheet-padding) * 2); margin: 0 auto; overflow: hidden; background: #fff; cursor: grab; touch-action: pan-y; }
 .orbit-details-track { display: flex; align-items: stretch; }
 .orbit-detail { flex: 0 0 100%; min-width: 0; padding: 0 var(--sheet-padding) 20px; overflow-wrap: anywhere; }
