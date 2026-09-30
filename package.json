@@ -11,6 +11,7 @@
     "build": "npm run generate && npm run typecheck && vite-ssg build",
     "generate": "node scripts/content.mjs && npm run generate:glass",
     "generate:glass": "node scripts/prepare-reeded-glass.mjs",
+    "generate:social": "node scripts/prepare-social.mjs",
     "typecheck": "vue-tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
     "preview": "vite preview",

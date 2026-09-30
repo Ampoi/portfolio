@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useHead } from '@unhead/vue'
+import { usePageMeta } from '../seo'
 import type { Project } from '../content'
 import ContentImage from '../components/ContentImage.vue'
 const props = defineProps<{ project: Project }>()
-useHead(() => ({ title: `${props.project.name} | Portfolio`, meta: [{ name: 'description', content: props.project.description }] }))
+usePageMeta(() => `${props.project.name} | Ampoi`, () => props.project.description, 'article')
 </script>
 
 <template>

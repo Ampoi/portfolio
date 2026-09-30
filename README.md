@@ -27,6 +27,12 @@ npm run preview:cloudflare # Cloudflare環境で配信・404を確認（先にbu
 
 `src/generated/` と `public/generated/` は自動生成です。直接編集せず、Gitにも追加しません。初回の型チェック前には `npm run generate` を実行してください。
 
+## favicon・OGP
+
+`public/favicon.png` はv1から引き継いだ元画像です（旧実装の `a5c7fb1` で追加されたもの）。同じ画像から16・32・48px入りの `favicon.ico` と180pxの `apple-touch-icon.png` を生成しています。
+
+`public/ogp.jpg` はトップと同じ山の背景・白いAmpoiロゴを使った1200×630pxのSNS共有画像です。背景・ロゴ・faviconの元画像を変更した場合は `npm run generate:social` を実行し、生成画像もコミットしてください。生成処理は `scripts/prepare-social.mjs`、タイトル・説明・OGP・Xカード・正規URLは `src/seo.ts` で管理します。メタ情報は静的HTMLに出力されるため、JavaScriptを実行しないクローラーでも取得できます。
+
 ## スタイル
 
 Tailwind CSS v4 を `@tailwindcss/vite` で組み込み、`src/style.css` から読み込んでいます。余白・配置・文字サイズ・レスポンシブなレイアウトは、Vueテンプレートのユーティリティクラスで指定します。

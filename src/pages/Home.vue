@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useHead } from '@unhead/vue'
+import { usePageMeta, siteTitle, siteDescription } from '../seo'
 import { projects, lettering } from '../content'
 import ContentImage from '../components/ContentImage.vue'
 import LandscapeHero from '../components/LandscapeHero.vue'
 import ReededFooter from '../components/ReededFooter.vue'
 import ProjectOrbit from '../components/ProjectOrbit.vue'
 const introPlaying = ref(false)
-useHead({ title: 'Portfolio', meta: [{ name: 'description', content: 'プロジェクトと作字の一覧です。' }] })
+usePageMeta(siteTitle, siteDescription)
 </script>
 
 <template>
