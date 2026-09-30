@@ -1,12 +1,31 @@
-- slug: example
-  name: サンプルプロジェクト
-  description: 詳細記事のあるプロジェクトです。自由に差し替えてください。
-  image: images/projects/example.jpg
-  link: https://example.com
-  article: articles/example.md
-
-- slug: link-only
-  name: リンクのみのサンプル
-  description: article を省略すると、詳細記事へのリンクは表示されません。
-  image: images/projects/example.jpg
-  link: https://example.com
+# Source: https://github.com/Ampoi/portfolio/blob/2e8372a9ccfd71c440985ab60295049165982821/components/index/projects.vue
+- slug: stask
+  name: Stask
+  description: 2022年夏〜学力向上アプリコンテスト〜未踏ジュニアにかけて開発している学生向けの課題管理アプリです。使いやすい(使いやすくする)から使ってみてね。
+  image: images/projects/stask.webp
+  link: https://stask.ampoi.dev
+- slug: tobe
+  name: ToBe
+  description: ゲームのスキルツリーみたいな感じで自分のタスクできたら面白そうだな〜　って思って作ったアプリです。
+  image: images/projects/tobe.webp
+  link: https://to-be.ampoi.dev
+- slug: urlmemo
+  name: URLMEMO
+  description: URLを通じてメモを保存・閲覧・共有できるアプリです。Instagramとかでそのまま文見られるよりはひと段落あったほうがいいかなって思って作りました。
+  image: images/projects/urlmemo.webp
+  link: https://urlmemo.ampoi.dev
+- slug: kagaribi
+  name: 131代海城祭公式サイト
+  description: 131代の文化祭公式サイトです。
+  image: images/projects/kagaribi.webp
+  link: https://131.kaijofes.com/
+- slug: kirameki
+  name: 132代海城祭公式サイト
+  description: 132代の文化祭公式サイトです。
+  image: images/projects/kirameki.webp
+  link: https://132.kaijofes.com/
+- slug: baser
+  name: BASER
+  description: 2Dの火星みたいな星の上で色々するゲームです。気が向いたらたまに開発してます。
+  image: images/projects/baser.webp
+  link: https://github.com/Ampoi/Baser
